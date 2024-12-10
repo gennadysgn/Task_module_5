@@ -4,8 +4,12 @@ from time import sleep
 class User:
     def __init__(self, nickname, password, age):
         self.nickname = nickname
-        self.password = hash(password)
+        password = hash(password)
+        self.password = password
         self.age = age
+
+    def __hash__(self):
+        return hash(self.password)
 
 
 class Video:
@@ -31,7 +35,7 @@ class UrTube:
 
     def log_in(self, nickname, password):
         for elem in self.users:
-            if nickname == elem.nickname and password == elem.password:
+            if nickname == elem.nickname and hash(password) == hash(elem.password):
                 self.current_user = elem.nickname
                 self.current_user_age = elem.age
 
@@ -61,7 +65,6 @@ class UrTube:
         return same_videos
 
     def watch_video(self, title):
-        time = []
         if self.current_user is not None:
             for elem in self.videos:
                 if title in elem.title:
@@ -69,11 +72,11 @@ class UrTube:
                         print("Вам нет 18 лет, пожалуйста покиньте страницу")
                         self.log_out()
                     else:
-                        for i in range(elem.time_now, elem.duration):
+                        for time_now in range(elem.duration):
                             sleep(1)
-                            i += 1
-                            time.append(i)
-                        print(*time, "Конец видео")
+                            time_now += 1
+                            print(time_now, end=' ')
+                        print("Конец видео")
         else:
             print(f"Войдите в аккаунт, чтобы смотреть видео")
 
@@ -93,6 +96,7 @@ ur.watch_video('Для чего девушкам парень программи
 ur.register('vasya_pupkin', 'F8098FM8fjm9jmi', 55)
 print(ur.current_user)
 ur.watch_video('Лучший язык программирования 2024 года!')
+
 
 # Вывод в консоль:
 # ['Лучший язык программирования 2024 года']
